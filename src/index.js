@@ -24,7 +24,6 @@ class TestRailConnecetor {
 
     axios.defaults.headers.common['Content-Type'] = 'application/json'
     axios.defaults.headers.common.Authorization = `Basic ${getAsBase64(`${this.user}:${this.password}`)}`
-    console.warn('CREATED WITH AUTH HEADER', axios.defaults.headers.common.Authorization)
   }
 
   // used to construct the host name for the API request
@@ -41,10 +40,9 @@ class TestRailConnecetor {
   // @param [id] The id of the object to target in the API
   // @return [callback] The callback
   //
-  closeCommand(command, id, callback) {
+  closeCommand(command, id) {
     return axios
       .post(this.getFullHostName() + command + id)
-      .then((response) => callback(response))
   }
 
   // Used to get an object in the API by the ID
@@ -54,10 +52,9 @@ class TestRailConnecetor {
   // @param [id] The id of the object to target in the API
   // @return [callback] The callback
   //
-  getIdCommand(command, id, callback) {
+  getIdCommand(command, id) {
     return axios
       .get(this.getFullHostName() + command + id)
-      .then((response) => callback(response))
   }
 
   // Used to get an object in the API
@@ -66,28 +63,24 @@ class TestRailConnecetor {
   // @param [command] The command to send to the API
   // @return [callback] The callback
   //
-  getCommand(command, callback) {
+  getCommand(command) {
     return axios
       .get(this.getFullHostName() + command)
-      .then((response) => callback(response))
   }
 
-  getExtraCommand(command, id, extra, callback) {
+  getExtraCommand(command, id, extra) {
     return axios
       .get(this.getFullHostName() + command + id + extra)
-      .then((response) => callback(response))
   }
 
-  addCommand(command, id, postData, callback) {
+  addCommand(command, id, postData) {
     return axios
       .post(this.getFullHostName() + command + id, postData)
-      .then((response) => callback(response))
   }
 
-  addExtraCommand(command, id, extra, postData, callback) {
+  addExtraCommand(command, id, extra, postData) {
     return axios
       .post(this.getFullHostName() + command + id + extra, postData)
-      .then((response) => callback(response))
   }
 
   sendCommand(projectID, command, json) {
@@ -96,7 +89,6 @@ class TestRailConnecetor {
         `${this.host}/index.php?/api/v2/${command}${projectID}`,
         JSON.stringify(json),
       )
-      .then((response) => response)
   }
 
   // -------- CASES  ----------------------
@@ -106,8 +98,8 @@ class TestRailConnecetor {
   // @param [caseId] The ID of the case to fetch
   // @return [callback] The callback with the case object
   //
-  getCase(caseId, callback) {
-    return this.getIdCommand('get_case/', caseId, callback)
+  getCase(caseId) {
+    return this.getIdCommand('get_case/', caseId)
   }
 
   // Used to fetch cases from the API
@@ -117,11 +109,11 @@ class TestRailConnecetor {
   // @param [sectionId] The ID of the section
   // @return [callback] The callback with the case object
   //
-  getCases(projectId, suiteId, sectionId, callback) {
+  getCases(projectId, suiteId, sectionId) {
     if (sectionId != null) {
-      return this.getExtraCommand('get_cases/', projectId, `&suiteId=${suiteId}&sectionId=${sectionId}`, callback)
+      return this.getExtraCommand('get_cases/', projectId, `&suiteId=${suiteId}&sectionId=${sectionId}`)
     }
-    return this.getExtraCommand('get_cases/', projectId, `&suiteId=${suiteId}`, callback)
+    return this.getExtraCommand('get_cases/', projectId, `&suiteId=${suiteId}`)
   }
 
   // Used to add cases to the API
@@ -135,7 +127,7 @@ class TestRailConnecetor {
   // @param [refs]
   // @return [callback] The callback with the case object
   //
-  addCase(sectionId, title, typeId, projectId, estimate, milestoneId, refs, callback) {
+  addCase(sectionId, title, typeId, projectId, estimate, milestoneId, refs) {
     const json = {
       title,
       type_id: typeId,
@@ -144,10 +136,10 @@ class TestRailConnecetor {
       milestone_id: milestoneId,
       refs,
     }
-    return this.addCommand('add_case/', sectionId, JSON.stringify(json), callback)
+    return this.addCommand('add_case/', sectionId, JSON.stringify(json))
   }
 
-  updateCase(caseId, title, typeId, projectId, estimate, milestoneId, refs, callback) {
+  updateCase(caseId, title, typeId, projectId, estimate, milestoneId, refs) {
     const json = {
       title,
       type_id: typeId,
@@ -156,74 +148,74 @@ class TestRailConnecetor {
       milestone_id: milestoneId,
       refs,
     }
-    return this.addCommand('update_case/', caseId, JSON.stringify(json), callback)
+    return this.addCommand('update_case/', caseId, JSON.stringify(json))
   }
 
-  deleteCase(caseId, callback) {
-    return this.closeCommand('delete_case/', caseId, callback)
+  deleteCase(caseId) {
+    return this.closeCommand('delete_case/', caseId)
   }
 
   // -------- CASE FIELDS -----------------
 
-  getCaseFields(callback) {
-    return this.getCommand('get_case_fields/', callback)
+  getCaseFields() {
+    return this.getCommand('get_case_fields/')
   }
 
   // -------- CASE TYPES ------------------
 
-  getCaseTypes(callback) {
-    return this.getCommand('get_case_types/', callback)
+  getCaseTypes() {
+    return this.getCommand('get_case_types/')
   }
 
   // -------- CONFIGURATIONS ------------------
 
-  getConfigs(projectId, callback) {
-    return this.getIdCommand('get_configs/', projectId, callback)
+  getConfigs(projectId) {
+    return this.getIdCommand('get_configs/', projectId)
   }
 
-  addConfigGroup(projectId, name, callback) {
+  addConfigGroup(projectId, name) {
     const json = {}
     json.name = name
-    return this.addCommand('add_config_group/', projectId, JSON.stringify(json), callback)
+    return this.addCommand('add_config_group/', projectId, JSON.stringify(json))
   }
 
-  addConfig(configGroupId, name, callback) {
+  addConfig(configGroupId, name) {
     const json = {}
     json.name = name
-    return this.addCommand('add_config/', configGroupId, JSON.stringify(json), callback)
+    return this.addCommand('add_config/', configGroupId, JSON.stringify(json))
   }
 
-  updateConfigGroup(configGroupId, name, callback) {
+  updateConfigGroup(configGroupId, name) {
     const json = {}
     json.name = name
-    return this.addCommand('update_config_group/', configGroupId, JSON.stringify(json), callback)
+    return this.addCommand('update_config_group/', configGroupId, JSON.stringify(json))
   }
 
-  updateConfig(configId, name, callback) {
+  updateConfig(configId, name) {
     const json = {}
     json.name = name
-    return this.addCommand('update_config/', configId, JSON.stringify(json), callback)
+    return this.addCommand('update_config/', configId, JSON.stringify(json))
   }
 
-  deleteConfigGroup(configGroupId, callback) {
-    return this.closeCommand('delete_config_group/', configGroupId, callback)
+  deleteConfigGroup(configGroupId) {
+    return this.closeCommand('delete_config_group/', configGroupId)
   }
 
-  deleteConfig(configId, callback) {
-    return this.closeCommand('delete_config/', configId, callback)
+  deleteConfig(configId) {
+    return this.closeCommand('delete_config/', configId)
   }
 
   // -------- MILESTONES ------------------
 
-  getMilestone(milestoneId, callback) {
-    return this.getIdCommand('get_milestone/', milestoneId, callback)
+  getMilestone(milestoneId) {
+    return this.getIdCommand('get_milestone/', milestoneId)
   }
 
-  getMilestones(projectId, callback) {
-    return this.getIdCommand('get_milestones/', projectId, callback)
+  getMilestones(projectId) {
+    return this.getIdCommand('get_milestones/', projectId)
   }
 
-  addMilestone(projectId, name, description, dueOn, parentId, startOn, callback) {
+  addMilestone(projectId, name, description, dueOn, parentId, startOn) {
     const json = {
       name,
       description,
@@ -231,11 +223,11 @@ class TestRailConnecetor {
       parent_id: parentId,
       start_on: startOn,
     }
-    return this.addCommand('add_milestone/', projectId, JSON.stringify(json), callback)
+    return this.addCommand('add_milestone/', projectId, JSON.stringify(json))
   }
 
   updateMilestone(
-    milestoneId, name, description, dueOn, startOn, isCompleted, isStarted, parentId, callback,
+    milestoneId, name, description, dueOn, startOn, isCompleted, isStarted, parentId,
   ) {
     const json = {
       name,
@@ -246,133 +238,133 @@ class TestRailConnecetor {
       start_on: startOn,
       is_started: isStarted,
     }
-    return this.addCommand('update_milestone/', milestoneId, JSON.stringify(json), callback)
+    return this.addCommand('update_milestone/', milestoneId, JSON.stringify(json))
   }
 
-  deleteMilestone(milestoneId, callback) {
-    return this.closeCommand('delete_milestone/', milestoneId, callback)
+  deleteMilestone(milestoneId) {
+    return this.closeCommand('delete_milestone/', milestoneId)
   }
 
   // -------- PLANS -----------------------
 
-  getPlan(planId, callback) {
-    return this.getIdCommand('get_plan/', planId, callback)
+  getPlan(planId) {
+    return this.getIdCommand('get_plan/', planId)
   }
 
-  getPlans(projectId, callback) {
-    return this.getIdCommand('get_plans/', projectId, callback)
+  getPlans(projectId) {
+    return this.getIdCommand('get_plans/', projectId)
   }
 
-  addPlan(projectId, name, description, milestoneId, callback) {
+  addPlan(projectId, name, description, milestoneId) {
     const json = {
       name,
       description,
       milestone_id: milestoneId,
     }
-    return this.addCommand('add_plan/', projectId, JSON.stringify(json), callback)
+    return this.addCommand('add_plan/', projectId, JSON.stringify(json))
   }
 
   // TODO: update to handle extra params
-  addPlanEntry(planId, suiteId, name, assignedtoId, includeAll, callback) {
+  addPlanEntry(planId, suiteId, name, assignedtoId, includeAll) {
     const json = {
       suite_id: suiteId,
       name,
       assignedto_id: assignedtoId,
       include_all: includeAll,
     }
-    return this.addCommand('add_plan_entry/', planId, JSON.stringify(json), callback)
+    return this.addCommand('add_plan_entry/', planId, JSON.stringify(json))
   }
 
-  updatePlan(planId, name, description, milestoneId, callback) {
+  updatePlan(planId, name, description, milestoneId) {
     const json = {
       name,
       description,
       milestone_id: milestoneId,
     }
-    return this.addCommand('update_plan/', planId, JSON.stringify(json), callback)
+    return this.addCommand('update_plan/', planId, JSON.stringify(json))
   }
 
-  updatePlanEntry(planId, entryId, name, assignedtoId, includeAll, callback) {
+  updatePlanEntry(planId, entryId, name, assignedtoId, includeAll) {
     const json = {
       name,
       assignedto_id: assignedtoId,
       include_all: includeAll,
     }
-    return this.addCommand('update_plan_entry/', (`${planId}/${entryId}`), JSON.stringify(json), callback)
+    return this.addCommand('update_plan_entry/', (`${planId}/${entryId}`), JSON.stringify(json))
   }
 
-  closePlan(planId, callback) {
-    return this.closeCommand('close_plan/', planId, callback)
+  closePlan(planId) {
+    return this.closeCommand('close_plan/', planId)
   }
 
-  deletePlan(planId, callback) {
-    return this.closeCommand('delete_plan/', planId, callback)
+  deletePlan(planId) {
+    return this.closeCommand('delete_plan/', planId)
   }
 
-  deletePlanEntry(planId, entryId, callback) {
-    return this.closeCommand('delete_plan_entry/', (`${planId}/${entryId}`), callback)
+  deletePlanEntry(planId, entryId) {
+    return this.closeCommand('delete_plan_entry/', (`${planId}/${entryId}`))
   }
 
   // -------- PRIORITIES ------------------
 
-  getPriorities(callback) {
-    return this.getCommand('get_priorities/', callback)
+  getPriorities() {
+    return this.getCommand('get_priorities/')
   }
 
   // -------- PROJECTS --------------------
 
-  getProject(projectId, callback) {
-    return this.getIdCommand('get_project/', projectId, callback)
+  getProject(projectId) {
+    return this.getIdCommand('get_project/', projectId)
   }
 
-  getProjects(callback) {
-    return this.getCommand('get_projects/', callback)
+  getProjects() {
+    return this.getCommand('get_projects/')
   }
 
-  addProject(name, announcement, showAnnouncement, callback) {
+  addProject(name, announcement, showAnnouncement) {
     const json = {
       name,
       announcement,
       show_announcement: showAnnouncement,
     }
-    return this.addCommand('add_project/', '', JSON.stringify(json), callback)
+    return this.addCommand('add_project/', '', JSON.stringify(json))
   }
 
-  updateProject(projectId, name, announcement, showAnnouncement, isCompleted, callback) {
+  updateProject(projectId, name, announcement, showAnnouncement, isCompleted) {
     const json = {
       name,
       announcement,
       show_announcement: showAnnouncement,
       is_completed: isCompleted,
     }
-    return this.addCommand('add_project/', projectId, JSON.stringify(json), callback)
+    return this.addCommand('add_project/', projectId, JSON.stringify(json))
   }
 
-  deleteProject(projectId, callback) {
-    return this.closeCommand('delete_project/', projectId, callback)
+  deleteProject(projectId) {
+    return this.closeCommand('delete_project/', projectId)
   }
 
   // -------- RESULTS ---------------------
 
-  getResults(testId, callback, limit) {
+  getResults(testId, limit) {
     if ((limit == null)) {
-      return this.getIdCommand('get_results/', testId, callback)
+      return this.getIdCommand('get_results/', testId)
     }
     const extra = `&limit=${limit}`
-    return this.getExtraCommand('get_results/', testId, extra, callback)
+    return this.getExtraCommand('get_results/', testId, extra)
   }
 
-  getResultsForCase(runId, caseId, limit, callback) {
+  getResultsForCase(runId, caseId, limit) {
     let extra
     if ((limit == null)) {
       extra = `/${caseId}`
-      return this.getExtraCommand('get_results_for_case/', runId, extra, callback)
+      return this.getExtraCommand('get_results_for_case/', runId, extra)
     }
     extra = `/${caseId}&limit=${limit}`
-    return this.getExtraCommand('get_results_for_case/', runId, extra, callback)
+    return this.getExtraCommand('get_results_for_case/', runId, extra)
   }
 
-  addResult(testId, statusId, comment, version, elapsed, defects, assignedtoId, callback) {
+  addResult(testId, statusId, comment, version, elapsed, defects, assignedtoId) {
     const json = {
       status_id: statusId,
       comment,
@@ -381,15 +373,15 @@ class TestRailConnecetor {
       defects,
       assignedto_id: assignedtoId,
     }
-    return this.addCommand('add_result/', testId, JSON.stringify(json), callback)
+    return this.addCommand('add_result/', testId, JSON.stringify(json))
   }
 
-  addResults(runId, results, callback) {
-    return this.addExtraCommand('add_results/', runId, JSON.stringify(results), callback)
+  addResults(runId, results) {
+    return this.addExtraCommand('add_results/', runId, JSON.stringify(results))
   }
 
   addResultForCase(
-    runId, caseId, statusId, comment, version, elapsed, defects, assignedtoId, callback,
+    runId, caseId, statusId, comment, version, elapsed, defects, assignedtoId,
   ) {
     const json = {
       status_id: statusId,
@@ -399,144 +391,144 @@ class TestRailConnecetor {
       defects,
       assignedto_id: assignedtoId,
     }
-    return this.addExtraCommand('add_result_for_case/', runId, (`/${caseId}`), JSON.stringify(json), callback)
+    return this.addExtraCommand('add_result_for_case/', runId, (`/${caseId}`), JSON.stringify(json))
   }
 
-  addResultsForCases(runId, results, callback) {
-    return this.addExtraCommand('add_results_for_cases/', runId, '', JSON.stringify(results), callback)
+  addResultsForCases(runId, results) {
+    return this.addExtraCommand('add_results_for_cases/', runId, '', JSON.stringify(results))
   }
 
   // -------- RESULT FIELDS ---------------------
 
-  getResultFields(callback) {
-    return this.getIdCommand('get_result_fields/', '', callback)
+  getResultFields() {
+    return this.getIdCommand('get_result_fields/', '')
   }
 
   // -------- RUNS ------------------------
 
-  getRun(runId, callback) {
-    return this.getIdCommand('get_run/', runId, callback)
+  getRun(runId) {
+    return this.getIdCommand('get_run/', runId)
   }
 
-  getRuns(runId, callback) {
-    return this.getIdCommand('get_runs/', runId, callback)
+  getRuns(runId) {
+    return this.getIdCommand('get_runs/', runId)
   }
 
   // TODO: Include all switch and case id select
-  addRun(projectID, suiteId, name, description, milestoneId, callback) {
+  addRun(projectID, suiteId, name, description, milestoneId) {
     const json = {
       suite_id: suiteId,
       name,
       description,
       milestone_id: milestoneId,
     }
-    return this.addCommand('add_run/', projectID, JSON.stringify(json), callback)
+    return this.addCommand('add_run/', projectID, JSON.stringify(json))
   }
 
-  updateRun(runID, name, description, callback) {
+  updateRun(runID, name, description) {
     const json = {
       name,
       description,
     }
-    return this.addCommand('update_run/', runID, JSON.stringify(json), callback)
+    return this.addCommand('update_run/', runID, JSON.stringify(json))
   }
 
-  closeRun(runId, callback) {
-    return this.closeCommand('close_run/', runId, callback)
+  closeRun(runId) {
+    return this.closeCommand('close_run/', runId)
   }
 
-  deleteRun(runId, callback) {
-    return this.closeCommand('delete_run/', runId, callback)
+  deleteRun(runId) {
+    return this.closeCommand('delete_run/', runId)
   }
 
   // -------- STATUSES --------------------
 
-  getStatuses(callback) {
-    return this.getCommand('get_statuses/', callback)
+  getStatuses() {
+    return this.getCommand('get_statuses/')
   }
 
   // -------- SECTIONS --------------------
 
-  getSection(sectionId, callback) {
-    return this.getIdCommand('get_section/', sectionId, callback)
+  getSection(sectionId) {
+    return this.getIdCommand('get_section/', sectionId)
   }
 
-  getSections(projectId, suiteId, callback) {
-    return this.getExtraCommand('get_sections/', projectId, `&suiteId=${suiteId}`, callback)
+  getSections(projectId, suiteId) {
+    return this.getExtraCommand('get_sections/', projectId, `&suiteId=${suiteId}`)
   }
 
-  addSection(projectId, suiteId, parentId, name, callback) {
+  addSection(projectId, suiteId, parentId, name) {
     const json = {
       suite_id: suiteId,
       parent_id: parentId,
       name,
     }
-    return this.addCommand('add_section/', projectId, JSON.stringify(json), callback)
+    return this.addCommand('add_section/', projectId, JSON.stringify(json))
   }
 
-  updateSection(sectionId, name, callback) {
+  updateSection(sectionId, name) {
     const json = {
       name,
     }
-    return this.addCommand('update_Section/', sectionId, JSON.stringify(json), callback)
+    return this.addCommand('update_Section/', sectionId, JSON.stringify(json))
   }
 
-  deleteSection(sectionId, callback) {
-    return this.closeCommand('delete_section/', sectionId, callback)
+  deleteSection(sectionId) {
+    return this.closeCommand('delete_section/', sectionId)
   }
 
   // -------- SUITES -----------
 
-  getSuite(suiteId, callback) {
-    return this.getIdCommand('get_suite/', suiteId, callback)
+  getSuite(suiteId) {
+    return this.getIdCommand('get_suite/', suiteId)
   }
 
-  getSuites(projectId, callback) {
-    return this.getIdCommand('get_suites/', projectId, callback)
+  getSuites(projectId) {
+    return this.getIdCommand('get_suites/', projectId)
   }
 
-  addSuite(projectId, name, description, callback) {
+  addSuite(projectId, name, description) {
     const json = {
       name,
       description,
     }
-    return this.addCommand('add_suite/', projectId, JSON.stringify(json), callback)
+    return this.addCommand('add_suite/', projectId, JSON.stringify(json))
   }
 
-  updateSuite(suiteId, name, description, callback) {
+  updateSuite(suiteId, name, description) {
     const json = {
       name,
       description,
     }
-    return this.addCommand('update_suite/', suiteId, JSON.stringify(json), callback)
+    return this.addCommand('update_suite/', suiteId, JSON.stringify(json))
   }
 
-  deleteSuite(suiteId, callback) {
-    return this.closeCommand('delete_suite/', suiteId, callback)
+  deleteSuite(suiteId) {
+    return this.closeCommand('delete_suite/', suiteId)
   }
 
   // -------- TESTS -----------------------
 
-  getTest(testId, callback) {
-    return this.getIdCommand('get_test/', testId, callback)
+  getTest(testId) {
+    return this.getIdCommand('get_test/', testId)
   }
 
-  getTests(runId, callback) {
-    return this.getIdCommand('get_tests/', runId, callback)
+  getTests(runId) {
+    return this.getIdCommand('get_tests/', runId)
   }
 
   // -------- USERS -----------------------
 
-  getUser(userId, callback) {
-    return this.getIdCommand('get_user/', userId, callback)
+  getUser(userId) {
+    return this.getIdCommand('get_user/', userId)
   }
 
-  getUserByEmail(email, callback) {
-    return this.getExtraCommand('', '', `get_user_by_email&email=${email}`, callback)
+  getUserByEmail(email) {
+    return this.getExtraCommand('', '', `get_user_by_email&email=${email}`)
   }
 
-  getUsers(callback) {
-    return this.getCommand('get_users/', callback)
+  getUsers() {
+    return this.getCommand('get_users/')
   }
 }
 
