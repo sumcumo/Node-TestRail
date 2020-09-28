@@ -3,7 +3,7 @@
   "contributors": [
     "Stewart Taylor <stewart@taylore.net> (http://taylore.net"
   ],
-  "name": "node-testrail",
+  "name": "@sum.cumo/node-testrail",
   "description": "An API wrapper for TestRail",
   "version": "1.0.0",
   "repository": {
