@@ -5,7 +5,7 @@ import json from '@rollup/plugin-json'
 import cleaner from 'rollup-plugin-cleaner'
 
 export default {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: [
     {
       dir: './dist/es/',
@@ -21,12 +21,12 @@ export default {
     babel({
       exclude: 'node_modules/**',
       runtimeHelpers: true,
-      extensions: ['.js'],
+      extensions: ['.ts', '.js'],
     }),
     json(),
     cleaner({ targets: ['dist'] }),
     resolve({
-      extensions: ['.mjs', '.js', '.json', '.node'],
+      extensions: ['.ts', '.mjs', '.js', '.json', '.node'],
     }),
     commonjs(),
   ],
