@@ -16,6 +16,10 @@ function convertToBase64(str: string): string {
   return buff.toString('base64')
 }
 
+const DEFAULT_HEADERS: {[id: string]: string} = {
+  'Content-Type': 'application/json',
+}
+
 class TestRailConnector {
   private readonly host: string
 
@@ -79,23 +83,38 @@ class TestRailConnector {
       .get(this.getFullHostName() + command + id + extra)
   }
 
-  addCommand(command: string, id: string, postData: string): Promise<AxiosResponse> {
+  addCommand(command: string, id: string, data): Promise<AxiosResponse> {
     return axios
-      .post(this.getFullHostName() + command + id, postData)
+      .post(this.getFullHostName() + command + id, JSON.stringify(data), {
+        headers: {
+          ...DEFAULT_HEADERS,
+        },
+      })
   }
 
   addExtraCommand(
-    command: string, id: string, extra: string, postData: string,
+    command: string, id: string, extra: string, data,
   ) : Promise<AxiosResponse> {
     return axios
-      .post(this.getFullHostName() + command + id + extra, postData)
+      .post(this.getFullHostName() + command + id + extra,
+        JSON.stringify(data),
+        {
+          headers: {
+            ...DEFAULT_HEADERS,
+          },
+        })
   }
 
-  sendCommand(projectID: string, command: string, json): Promise<AxiosResponse> {
+  sendCommand(projectID: string, command: string, data): Promise<AxiosResponse> {
     return axios
       .post(
         this.getFullHostName() + command + projectID,
-        JSON.stringify(json),
+        JSON.stringify(data),
+        {
+          headers: {
+            ...DEFAULT_HEADERS,
+          },
+        },
       )
   }
 
@@ -139,7 +158,7 @@ class TestRailConnector {
   addCase(
     sectionId, title, typeId, projectId, estimate, milestoneId, refs,
   ): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       title,
       type_id: typeId,
       project_id: projectId,
@@ -147,13 +166,13 @@ class TestRailConnector {
       milestone_id: milestoneId,
       refs,
     }
-    return this.addCommand('add_case/', sectionId, JSON.stringify(json))
+    return this.addCommand('add_case/', sectionId, data)
   }
 
   updateCase(
     caseId, title, typeId, projectId, estimate, milestoneId, refs,
   ): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       title,
       type_id: typeId,
       project_id: projectId,
@@ -161,7 +180,7 @@ class TestRailConnector {
       milestone_id: milestoneId,
       refs,
     }
-    return this.addCommand('update_case/', caseId, JSON.stringify(json))
+    return this.addCommand('update_case/', caseId, data)
   }
 
   deleteCase(caseId): Promise<AxiosResponse> {
@@ -187,31 +206,31 @@ class TestRailConnector {
   }
 
   addConfigGroup(projectId, name): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
     }
-    return this.addCommand('add_config_group/', projectId, JSON.stringify(json))
+    return this.addCommand('add_config_group/', projectId, data)
   }
 
   addConfig(configGroupId, name): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
     }
-    return this.addCommand('add_config/', configGroupId, JSON.stringify(json))
+    return this.addCommand('add_config/', configGroupId, data)
   }
 
   updateConfigGroup(configGroupId, name): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
     }
-    return this.addCommand('update_config_group/', configGroupId, JSON.stringify(json))
+    return this.addCommand('update_config_group/', configGroupId, data)
   }
 
   updateConfig(configId, name): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
     }
-    return this.addCommand('update_config/', configId, JSON.stringify(json))
+    return this.addCommand('update_config/', configId, data)
   }
 
   deleteConfigGroup(configGroupId): Promise<AxiosResponse> {
@@ -233,20 +252,20 @@ class TestRailConnector {
   }
 
   addMilestone(projectId, name, description, dueOn, parentId, startOn): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       description,
       due_on: dueOn,
       parent_id: parentId,
       start_on: startOn,
     }
-    return this.addCommand('add_milestone/', projectId, JSON.stringify(json))
+    return this.addCommand('add_milestone/', projectId, data)
   }
 
   updateMilestone(
     milestoneId, name, description, dueOn, startOn, isCompleted, isStarted, parentId,
   ): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       description,
       due_on: dueOn,
@@ -255,7 +274,7 @@ class TestRailConnector {
       start_on: startOn,
       is_started: isStarted,
     }
-    return this.addCommand('update_milestone/', milestoneId, JSON.stringify(json))
+    return this.addCommand('update_milestone/', milestoneId, data)
   }
 
   deleteMilestone(milestoneId): Promise<AxiosResponse> {
@@ -273,41 +292,41 @@ class TestRailConnector {
   }
 
   addPlan(projectId, name, description, milestoneId): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       description,
       milestone_id: milestoneId,
     }
-    return this.addCommand('add_plan/', projectId, JSON.stringify(json))
+    return this.addCommand('add_plan/', projectId, data)
   }
 
   // TODO: update to handle extra params
   addPlanEntry(planId, suiteId, name, assignedtoId, includeAll): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       suite_id: suiteId,
       name,
       assignedto_id: assignedtoId,
       include_all: includeAll,
     }
-    return this.addCommand('add_plan_entry/', planId, JSON.stringify(json))
+    return this.addCommand('add_plan_entry/', planId, data)
   }
 
   updatePlan(planId, name, description, milestoneId): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       description,
       milestone_id: milestoneId,
     }
-    return this.addCommand('update_plan/', planId, JSON.stringify(json))
+    return this.addCommand('update_plan/', planId, data)
   }
 
   updatePlanEntry(planId, entryId, name, assignedtoId, includeAll): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       assignedto_id: assignedtoId,
       include_all: includeAll,
     }
-    return this.addCommand('update_plan_entry/', (`${planId}/${entryId}`), JSON.stringify(json))
+    return this.addCommand('update_plan_entry/', (`${planId}/${entryId}`), data)
   }
 
   closePlan(planId): Promise<AxiosResponse> {
@@ -339,24 +358,24 @@ class TestRailConnector {
   }
 
   addProject(name, announcement, showAnnouncement): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       announcement,
       show_announcement: showAnnouncement,
     }
-    return this.addCommand('add_project/', '', JSON.stringify(json))
+    return this.addCommand('add_project/', '', data)
   }
 
   updateProject(
     projectId, name, announcement, showAnnouncement, isCompleted,
   ): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       announcement,
       show_announcement: showAnnouncement,
       is_completed: isCompleted,
     }
-    return this.addCommand('add_project/', projectId, JSON.stringify(json))
+    return this.addCommand('add_project/', projectId, data)
   }
 
   deleteProject(projectId): Promise<AxiosResponse> {
@@ -386,7 +405,7 @@ class TestRailConnector {
   addResult(
     testId, statusId, comment, version, elapsed, defects, assignedtoId,
   ): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       status_id: statusId,
       comment,
       version,
@@ -394,17 +413,17 @@ class TestRailConnector {
       defects,
       assignedto_id: assignedtoId,
     }
-    return this.addCommand('add_result/', testId, JSON.stringify(json))
+    return this.addCommand('add_result/', testId, data)
   }
 
   addResults(runId, results): Promise<AxiosResponse> {
-    return this.addExtraCommand('add_results/', runId, '', JSON.stringify(results))
+    return this.addExtraCommand('add_results/', runId, '', results)
   }
 
   addResultForCase(
     runId, caseId, statusId, comment, version, elapsed, defects, assignedtoId,
   ): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       status_id: statusId,
       comment,
       version,
@@ -412,11 +431,11 @@ class TestRailConnector {
       defects,
       assignedto_id: assignedtoId,
     }
-    return this.addExtraCommand('add_result_for_case/', runId, (`/${caseId}`), JSON.stringify(json))
+    return this.addExtraCommand('add_result_for_case/', runId, (`/${caseId}`), data)
   }
 
   addResultsForCases(runId, results): Promise<AxiosResponse> {
-    return this.addExtraCommand('add_results_for_cases/', runId, '', JSON.stringify(results))
+    return this.addExtraCommand('add_results_for_cases/', runId, '', results)
   }
 
   // -------- RESULT FIELDS ---------------------
@@ -436,22 +455,33 @@ class TestRailConnector {
   }
 
   // TODO: Include all switch and case id select
-  addRun(projectID, suiteId, name, description, milestoneId): Promise<AxiosResponse> {
-    const json = {
+  addRun(
+    projectID,
+    suiteId,
+    name,
+    description,
+    milestoneId,
+    includeAll: boolean,
+    caseIds: string[] | null,
+  ): Promise<AxiosResponse> {
+    const data = {
       suite_id: suiteId,
       name,
       description,
       milestone_id: milestoneId,
+      includeAll,
+      case_ids: caseIds,
     }
-    return this.addCommand('add_run/', projectID, JSON.stringify(json))
+    console.warn('ADD RUN')
+    return this.addCommand('add_run/', projectID, data)
   }
 
   updateRun(runID, name, description): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       description,
     }
-    return this.addCommand('update_run/', runID, JSON.stringify(json))
+    return this.addCommand('update_run/', runID, data)
   }
 
   closeRun(runId): Promise<AxiosResponse> {
@@ -479,19 +509,19 @@ class TestRailConnector {
   }
 
   addSection(projectId, suiteId, parentId, name): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       suite_id: suiteId,
       parent_id: parentId,
       name,
     }
-    return this.addCommand('add_section/', projectId, JSON.stringify(json))
+    return this.addCommand('add_section/', projectId, data)
   }
 
   updateSection(sectionId, name): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
     }
-    return this.addCommand('update_Section/', sectionId, JSON.stringify(json))
+    return this.addCommand('update_Section/', sectionId, data)
   }
 
   deleteSection(sectionId): Promise<AxiosResponse> {
@@ -509,19 +539,19 @@ class TestRailConnector {
   }
 
   addSuite(projectId, name, description): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       description,
     }
-    return this.addCommand('add_suite/', projectId, JSON.stringify(json))
+    return this.addCommand('add_suite/', projectId, data)
   }
 
   updateSuite(suiteId, name, description): Promise<AxiosResponse> {
-    const json = {
+    const data = {
       name,
       description,
     }
-    return this.addCommand('update_suite/', suiteId, JSON.stringify(json))
+    return this.addCommand('update_suite/', suiteId, data)
   }
 
   deleteSuite(suiteId): Promise<AxiosResponse> {
