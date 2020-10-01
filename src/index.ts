@@ -5,6 +5,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
 */
 import axios, { AxiosResponse } from 'axios'
+import { TestRailResult } from './types'
 
 const API_ROUTE = '/index.php?/api/v2/'
 
@@ -434,7 +435,7 @@ class TestRailConnector {
     return this.addExtraCommand('add_result_for_case/', runId, (`/${caseId}`), data)
   }
 
-  addResultsForCases(runId, results): Promise<AxiosResponse> {
+  addResultsForCases(runId, results: TestRailResult[]): Promise<AxiosResponse> {
     return this.addExtraCommand('add_results_for_cases/', runId, '', results)
   }
 
@@ -469,10 +470,10 @@ class TestRailConnector {
       name,
       description,
       milestone_id: milestoneId,
-      includeAll,
+      include_all: includeAll,
       case_ids: caseIds,
     }
-    console.warn('ADD RUN')
+    console.warn('ADD RUN', data)
     return this.addCommand('add_run/', projectID, data)
   }
 

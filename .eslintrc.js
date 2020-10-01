@@ -14,11 +14,16 @@ module.exports = {
   },
   rules: {
     semi: ['error', 'never'],
+    'import/extensions': [
+      'error',
+      'always',
+      { js: 'never', ts: 'never', mjs: 'never' },
+    ],
   },
   settings: {
     'import/resolver': {
-      alias: {
-        extensions: ['.js', '.json', '.ts'],
+      node: {
+        extensions: ['.ts', '.js', '.json'],
       },
     },
   },
