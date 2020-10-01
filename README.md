@@ -2,16 +2,16 @@ Node-TestRail
 =========
 
 
-!["npm badge"](https://nodei.co/npm/node-testrail.png)
+!["npm badge"](https://nodei.co/npm/@sum.cumo/node-testrail.png)
 
 Node-TestRail is an api wrapper for TestRail. It contains an easy way to interact with all of the API commands for version 2 of the testrail API.
 
-    http://docs.gurock.com/testrail-api2/start
+    https://www.gurock.com/testrail/docs/api
 
 How to use (Examples)
 ----
 ```javascript
-var TestRail = require("node-testrail");
+var TestRail = require("@sum.cumo/node-testrail");
 
 var testrail = new TestRail("https://example.testrail.com/", "email@example.com", "password");
 
@@ -28,7 +28,7 @@ testrail.getTest(TEST_ID, function(test) {
 });
 ```
 
-All the helper functions can be found under src within testrail.coffee
+All the helper functions can be found under src within index.js
 
 Available Commands
 ----
