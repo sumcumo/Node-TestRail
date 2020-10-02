@@ -53,7 +53,11 @@ class TestRailConnector {
   //
   closeCommand(command: string, id: string): Promise<AxiosResponse> {
     return axios
-      .post(this.getFullHostName() + command + id)
+      .post(this.getFullHostName() + command + id, null, {
+        headers: {
+          ...DEFAULT_HEADERS,
+        },
+      })
   }
 
   // Used to get an object in the API by the ID
