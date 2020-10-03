@@ -8,6 +8,18 @@ Node-TestRail is an api wrapper for TestRail. It contains an easy way to interac
 
     https://www.gurock.com/testrail/docs/api
 
+Installation
+---
+Yarn
+```bash
+yarn add -D @sum.cumo/node-testrail
+```
+
+NPM
+```bash
+npm install @sum.cumo/node-testrail --save-dev
+```
+
 How to use (Examples)
 ----
 ```javascript
@@ -36,149 +48,149 @@ Available Commands
 ##### CASES
 
 
-	getCase(case_id, callback)
+	getCase(case_id)
 
-	getCases(project_id, suite_id, section_id, callback)
+	getCases(project_id, suite_id, section_id)
 
-	addCase(section_id, title, type_id, project_id, estimate, milestone_id, refs, callback)
+	addCase(section_id, title, type_id, project_id, estimate, milestone_id, refs)
 
-	updateCase(case_id, title, type_id, project_id, estimate, milestone_id,refs, callback)
+	updateCase(case_id, title, type_id, project_id, estimate, milestone_id,refs)
 
-	deleteCase(case_id, callback)
+	deleteCase(case_id)
 
 ##### Case FIELDS
 
-	getCaseFields(callback)
+	getCaseFields()
 
 ##### Case TYPES
 
-	getCaseTypes(callback)
+	getCaseTypes()
 
 ##### Configurations
 
-	getConfigs(project_id, callback)
+	getConfigs(project_id)
 
 ##### Milestones
 
-	getMilestone(milestone_id, callback)
+	getMilestone(milestone_id)
 
-	getMilestones(project_id, callback)
+	getMilestones(project_id)
 
-	addMilestone(project_id, name, description, due_on, callback)
+	addMilestone(project_id, name, description, due_on)
 
-	updateMilestone(milestone_id, name, description, due_on, is_completed, callback)
+	updateMilestone(milestone_id, name, description, due_on, is_completed)
 
-	deleteMilestone(milestone_id, callback)
+	deleteMilestone(milestone_id)
 
 ##### PLANS
 
-	getPlan(plan_id, callback)
+	getPlan(plan_id)
 
-	getPlans(project_id, callback)
+	getPlans(project_id)
 
-	addPlan(project_id, name, description, milestone_id, callback)
+	addPlan(project_id, name, description, milestone_id)
 
-	addPlanEntry(plan_id, suite_id, name, assignedto_id, include_all, callback)
+	addPlanEntry(plan_id, suite_id, name, assignedto_id, include_all)
 
-	updatePlan(plan_id, name, description, milestone_id,callback)
+	updatePlan(plan_id, name, description, milestone_id)
 
-	updatePlanEntry(plan_id, entry_id, name, assignedto_id, include_all, callback)
+	updatePlanEntry(plan_id, entry_id, name, assignedto_id, include_all)
 
-	closePlan(plan_id, callback)
+	closePlan(plan_id)
 
-	deletePlan(plan_id, callback)
+	deletePlan(plan_id)
 
-	deletePlanEntry(plan_id, entry_id, callback)
+	deletePlanEntry(plan_id, entry_id)
 
 
 ##### PRIORITIES
 
-	getPriorities(callback)
+	getPriorities()
 
 ##### PROJECTS
 
-	getProject(project_id, callback)
+	getProject(project_id)
 
-	getProjects(callback)
+	getProjects()
 
-	addProject(name,announcement,show_announcement, callback)
+	addProject(name, announcement, show_announcement)
 
-	updateProject(project_id, name, announcement, show_announcement, is_completed, callback)
+	updateProject(project_id, name, announcement, show_announcement, is_completed)
 
-	deleteProject(project_id, callback)
+	deleteProject(project_id)
 
 ##### RESULTS
 
-	getResults(test_id, callback, limit)
+	getResults(test_id, limit)
 
-	getResultsForCase(run_id, case_id, limit, callback)
+	getResultsForCase(run_id, case_id, limit)
 
-	addResult(test_id, status_id, comment, version, elapsed, defects,assignedto_id, callback)
+	addResult(test_id, status_id, comment, version, elapsed, defects, assignedto_id)
 
-	addResults(run_id, results, callback)
+	addResults(run_id, results)
 
-	addResultForCase(run_id, case_id, status_id, comment, version, elapsed,defects, assignedto_id, callback)
+	addResultForCase(run_id, case_id, status_id, comment, version, elapsed, defects, assignedto_id)
 
-	addResultsForCases(run_id, results, callback)
+	addResultsForCases(run_id, results)
 
 ##### RESULT FIELDS
 
-	getResultFields(callback)
+	getResultFields()
 
 ##### RUNS
 
-	getRun(run_id, callback)
+	getRun(run_id)
 
-	getRuns(run_id, callback)
+	getRuns(run_id)
 
-	addRun(projectID,suite_id,name,description, milestone_id, callback)
+	addRun(projectID, suite_id, name, description, milestone_id, includeAll, caseIds)
 
-	updateRun(runID,name,description, callback)
+	updateRun(runID, name, description)
 
-	closeRun(run_id,callback)
+	closeRun(run_id)
 
-	deleteRun(run_id,callback)
+	deleteRun(run_id)
 
 ##### STATUSES
 
-	getStatuses(callback)
+	getStatuses()
 
 ##### SECTIONS
 
-	getSection(section_id, callback)
+	getSection(section_id)
 
-	getSections(project_id, suite_id, callback)
+	getSections(project_id, suite_id)
 
-	addSection(project_id, suite_id, parent_id, name,  callback)
+	addSection(project_id, suite_id, parent_id, name)
 
-	updateSection(section_id, name, callback)
+	updateSection(section_id, name)
 
-	deleteSection(section_id, callback)
+	deleteSection(section_id)
 
 
 ##### SUITES
 
-	getSuite(suite_id, callback)
+	getSuite(suite_id)
 
-	getSuites(project_id, callback)
+	getSuites(project_id)
 
-	addSuite(project_id,name, description, callback)
+	addSuite(project_id,name, description)
 
-	updateSuite(suite_id,name, description, callback)
+	updateSuite(suite_id,name, description)
 
-	deleteSuite(suite_id, callback)
+	deleteSuite(suite_id)
 
 ##### TESTS
 
-	getTest(test_id, callback)
+	getTest(test_id)
 
-	getTests(run_id, callback)
+	getTests(run_id)
 
 ##### USERS
 
-	getUser(user_id, callback)
+	getUser(user_id)
 
-	getUserByEmail(email, callback)
+	getUserByEmail(email)
 
 
 

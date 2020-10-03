@@ -49,7 +49,7 @@ class TestRailConnector {
   //
   // @param [command] The command to send to the API
   // @param [id] The id of the object to target in the API
-  // @return [callback] The callback
+  // @return Promise<AxiosRequest>
   //
   closeCommand(command: string, id: string): Promise<AxiosResponse> {
     return axios
@@ -65,7 +65,7 @@ class TestRailConnector {
   //
   // @param [command] The command to send to the API
   // @param [id] The id of the object to target in the API
-  // @return [callback] The callback
+  // @return Promise<AxiosRequest>
   //
   getIdCommand(command: string, id: string): Promise<AxiosResponse> {
     return axios
@@ -76,7 +76,7 @@ class TestRailConnector {
   // Internal Command
   //
   // @param [command] The command to send to the API
-  // @return [callback] The callback
+  // @return Promise<AxiosRequest>
   //
   getCommand(command: string): Promise<AxiosResponse> {
     return axios
@@ -128,7 +128,7 @@ class TestRailConnector {
   // Used to fetch a case from the API
   //
   // @param [caseId] The ID of the case to fetch
-  // @return [callback] The callback with the case object
+  // @return Promise<AxiosRequest>
   //
   getCase(caseId: string): Promise<AxiosResponse> {
     return this.getIdCommand('get_case/', caseId)
@@ -139,7 +139,7 @@ class TestRailConnector {
   // @param [projectId] The ID of the project
   // @param [suiteId] The ID of the suite
   // @param [sectionId] The ID of the section
-  // @return [callback] The callback with the case object
+  // @return Promise<AxiosRequest>
   //
   getCases(projectId, suiteId, sectionId): Promise<AxiosResponse> {
     let extra = `&suiteId=${suiteId}`
@@ -158,7 +158,7 @@ class TestRailConnector {
   // @param [estimate] The estimate of the case
   // @param [milestoneId] The ID of the milestone to add to
   // @param [refs]
-  // @return [callback] The callback with the case object
+  // @return Promise<AxiosRequest>
   //
   addCase(
     sectionId, title, typeId, projectId, estimate, milestoneId, refs,
