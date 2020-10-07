@@ -143,9 +143,9 @@ Available Commands
 
 	getRuns(run_id)
 
-	addRun(projectID, suite_id, name, description, milestone_id, includeAll, caseIds)
+	addRun(projectID, suite_id, name, description, milestone_id, includeAll, caseIds, refs)
 
-	updateRun(runID, name, description)
+	updateRun(runID, name, description, milestone_id, includeAll, caseIds, refs)
 
 	closeRun(run_id)
 
