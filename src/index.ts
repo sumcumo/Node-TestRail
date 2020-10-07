@@ -459,7 +459,17 @@ class TestRailConnector {
     return this.getIdCommand('get_runs/', runId)
   }
 
-  // TODO: Include all switch and case id select
+  /**
+   * Creates a new test run.
+   * @param projectID
+   * @param suiteId [number] The ID of the test suite for the test run
+   * @param name [string] The name of the test run
+   * @param description [string] The description of the test run
+   * @param milestoneId [number] The ID of the milestone to link to the test run
+   * @param includeAll [boolean] include all test cases or custom case selection
+   * @param caseIds [string[]] An array of case IDs for the custom case selection
+   * @param refs [string] A comma-separated list of references/requirements
+   */
   addRun(
     projectID,
     suiteId,
@@ -468,6 +478,7 @@ class TestRailConnector {
     milestoneId,
     includeAll: boolean,
     caseIds: string[] | null,
+    refs: string | null,
   ): Promise<AxiosResponse> {
     const data = {
       suite_id: suiteId,
@@ -476,15 +487,27 @@ class TestRailConnector {
       milestone_id: milestoneId,
       include_all: includeAll,
       case_ids: caseIds,
+      refs,
     }
-    console.warn('ADD RUN', data)
     return this.addCommand('add_run/', projectID, data)
   }
 
-  updateRun(runID, name, description): Promise<AxiosResponse> {
+  updateRun(
+    runID,
+    name,
+    description,
+    milestoneId,
+    includeAll: boolean,
+    caseIds: string[] | null,
+    refs: string | null,
+  ): Promise<AxiosResponse> {
     const data = {
       name,
       description,
+      milestone_id: milestoneId,
+      include_all: includeAll,
+      case_ids: caseIds,
+      refs,
     }
     return this.addCommand('update_run/', runID, data)
   }
