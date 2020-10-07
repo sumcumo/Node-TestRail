@@ -492,10 +492,22 @@ class TestRailConnector {
     return this.addCommand('add_run/', projectID, data)
   }
 
-  updateRun(runID, name, description): Promise<AxiosResponse> {
+  updateRun(
+    runID,
+    name,
+    description,
+    milestoneId,
+    includeAll: boolean,
+    caseIds: string[] | null,
+    refs: string | null,
+  ): Promise<AxiosResponse> {
     const data = {
       name,
       description,
+      milestone_id: milestoneId,
+      include_all: includeAll,
+      case_ids: caseIds,
+      refs,
     }
     return this.addCommand('update_run/', runID, data)
   }
