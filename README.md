@@ -27,23 +27,58 @@ var TestRail = require("@sum.cumo/node-testrail");
 
 var testrail = new TestRail("https://example.testrail.com/", "email@example.com", "password");
 
-testrail.addResult(TEST_ID, STATUS_ID, COMMENT, VERSION, ELAPSED_TIME, DEFECTS, ASSIGNEDTO_ID, function(body) {
-    console.log(body);
-});
+testrail
+    .addResult(TEST_ID, STATUS_ID, COMMENT, VERSION, ELAPSED_TIME, DEFECTS, ASSIGNEDTO_ID)
+    .then((body) => {
+        console.log(body)
+    })
 
-testrail.getUserByEmail(EMAIL, function(user) {
-    console.log(user);
-});
+testrail
+    .getUserByEmail(EMAIL)
+    .then((user) => {
+        console.log(user)
+    })
 
-testrail.getTest(TEST_ID, function(test) {
-    console.log(test);
-});
+testrail
+    .getTest(TEST_ID)
+    .then((test) => {
+        console.log(test)
+    })
+
+testrail.addAttachmentToRun('123', '/path/to/file')
+
+// This will upload an myAssets.zip containing all files and sub directories provided.
+// Use a colon if you need to provide a new directory name
+testrail
+    .addAttachmentsToRun(
+        '123',
+        [
+            'path/to/some/asset/dir',
+            'path/to/another/dir:newDirectoryName/InArchive'
+        ],
+        'myAssets'
+    )
 ```
 
 All the helper functions can be found under src within index.js
 
 Available Commands
 ----
+
+##### ATTACHMENTS
+
+
+    addAttachmentToCase(caseId: string, attachment: string): Promise<AxiosResponse>
+
+    addAttachmentToPlan(planId: string, attachment: string): Promise<AxiosResponse>
+
+    addAttachmentToPlanEntry(planId: string, entryId: string, attachment: string): Promise<AxiosResponse>
+
+    addAttachmentToResult(resultId: string, attachment: string): Promise<AxiosResponse>
+
+    addAttachmentToRun(runId: string, attachment: string): Promise<AxiosResponse>
+
+    addAttachmentsToRun(runId: string, attachments: string[], assetsArchiveName: null | string = null): Promise<AxiosResponse | null>
 
 ##### CASES
 

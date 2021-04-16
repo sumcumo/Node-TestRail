@@ -4,7 +4,11 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
 */
+import fs from 'fs'
 import axios, { AxiosResponse } from 'axios'
+// eslint-disable-next-line
+import FormData from 'form-data'
+import AdmZip from 'adm-zip'
 import { TestRailResult } from './types'
 
 const API_ROUTE = '/index.php?/api/v2/'
@@ -19,6 +23,20 @@ function convertToBase64(str: string): string {
 
 const DEFAULT_HEADERS: {[id: string]: string} = {
   'Content-Type': 'application/json',
+}
+
+function createArchiveFor(attachments: string[], assetsArchiveName: string) {
+  const archive = new AdmZip()
+
+  attachments.forEach((attachment) => {
+    const [source, target] = attachment.split(':')
+    archive.addLocalFolder(source, target || '')
+  })
+
+  // Another way to write the zip file: `writeZip()`
+  archive.writeZip(`${assetsArchiveName}.zip`)
+
+  return `${assetsArchiveName}.zip`
 }
 
 class TestRailConnector {
@@ -123,6 +141,113 @@ class TestRailConnector {
       )
   }
 
+  postForm(command: string, id: string, attachment: string): any {
+    const data = new FormData()
+    data.append('attachment', fs.createReadStream(attachment))
+
+    return axios({
+      method: 'post',
+      url: this.getFullHostName() + command + id,
+      headers: {
+        ...data.getHeaders(),
+      },
+      data,
+      maxBodyLength: Infinity,
+    })
+  }
+
+  // -------- ATTACHMENTS  ----------------------
+
+  /**
+   * Adds an attachment to a test case. The maximum allowable upload size is set to 256mb.
+   * Requires TestRail 6.5.2 or later
+   * @param caseId The ID of the test case the attachment should be added to
+   * @param attachment Attachments file path
+   */
+  addAttachmentToCase(caseId: string, attachment: string): Promise<AxiosResponse> {
+    return this.postForm('add_attachment_to_case/', caseId, attachment)
+  }
+
+  /**
+   * Adds an attachment to a test plan. The maximum allowable upload size is set to 256mb.
+   * Requires TestRail 6.3 or later
+   * @param planId The ID of the test plan the attachment should be added to
+   * @param attachment Attachments file path
+   */
+  addAttachmentToPlan(planId: string, attachment: string): Promise<AxiosResponse> {
+    return this.postForm('add_attachment_to_plan/', planId, attachment)
+  }
+
+  /**
+   * Adds an attachment to a test plan entry. The maximum allowable upload size is set to 256mb.
+   * Requires TestRail 6.3 or later
+   * @param planId The ID of the test plan containing the entry
+   * @param entryId The ID of the test plan entry the attachment should be added to
+   * @param attachment Attachments file path
+   */
+  addAttachmentToPlanEntry(
+    planId: string,
+    entryId: string,
+    attachment: string,
+  ): Promise<AxiosResponse> {
+    return this.postForm('add_attachment_to_plan_entry/', `${planId}/${entryId}`, attachment)
+  }
+
+  /**
+   * Adds attachment to a result based on the result ID.
+   * The maximum allowable upload size is set to 256mb.
+   * Requires TestRail 5.7 or later
+   * @param resultId The ID of the test result the attachment should be added to
+   * @param attachment Attachments file path
+   */
+  addAttachmentToResult(resultId: string, attachment: string): Promise<AxiosResponse> {
+    return this.postForm('add_attachment_to_result/', resultId, attachment)
+  }
+
+  /**
+   * Adds attachment to test run. The maximum allowable upload size is set to 256mb.
+   * Requires TestRail 6.3 or later
+   * @param runId The ID of the test run the attachment should be added to
+   * @param attachment Attachments file path
+   */
+  addAttachmentToRun(runId: string, attachment: string): Promise<AxiosResponse> {
+    return this.postForm('add_attachment_to_run/', runId, attachment)
+  }
+
+  /**
+   * Adds attachments to test run. The maximum allowable upload size is set to 256mb.
+   * Requires TestRail 6.3 or later
+   * @param runId The ID of the test run the attachment should be added to
+   * @param attachments List of Attachments file path
+   * @param assetsArchiveName optional archive name
+   */
+  async addAttachmentsToRun(
+    runId: string,
+    attachments: string[],
+    assetsArchiveName: null | string = null,
+  ): Promise<AxiosResponse | null> {
+    // No Archive Name specified? -> Attach each file
+    if (!assetsArchiveName) {
+      attachments.forEach((attachment) => this.addAttachmentToRun(runId, attachment))
+      return null
+    }
+
+    // Create archive for assets and upload it
+    const archive = createArchiveFor(attachments, assetsArchiveName)
+    const response: AxiosResponse = await this.postForm('add_attachment_to_run/', runId, archive)
+    fs.unlinkSync(archive)
+    return response
+  }
+
+  /**
+   * Deletes the specified attachment identified by :attachment_id.
+   * Requires TestRail 5.7 or later
+   * @param attachmentId The ID of the attachment to to delete
+   */
+  deleteAttachment(attachmentId: string): Promise<AxiosResponse> {
+    return this.closeCommand('delete_attachment/', attachmentId)
+  }
+
   // -------- CASES  ----------------------
 
   // Used to fetch a case from the API
@@ -141,7 +266,7 @@ class TestRailConnector {
   // @param [sectionId] The ID of the section
   // @return Promise<AxiosRequest>
   //
-  getCases(projectId, suiteId, sectionId): Promise<AxiosResponse> {
+  getCases(projectId: string, suiteId: string, sectionId: string): Promise<AxiosResponse> {
     let extra = `&suiteId=${suiteId}`
     if (sectionId != null) {
       extra += `&sectionId=${sectionId}`
@@ -451,12 +576,12 @@ class TestRailConnector {
 
   // -------- RUNS ------------------------
 
-  getRun(runId): Promise<AxiosResponse> {
+  getRun(runId: string): Promise<AxiosResponse> {
     return this.getIdCommand('get_run/', runId)
   }
 
-  getRuns(runId): Promise<AxiosResponse> {
-    return this.getIdCommand('get_runs/', runId)
+  getRuns(projectId: string): Promise<AxiosResponse> {
+    return this.getIdCommand('get_runs/', projectId)
   }
 
   /**

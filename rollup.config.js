@@ -27,6 +27,7 @@ export default {
     cleaner({ targets: ['dist'] }),
     resolve({
       extensions: ['.ts', '.mjs', '.js', '.json', '.node'],
+      preferBuiltins: true,
     }),
     commonjs(),
   ],
