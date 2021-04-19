@@ -30,7 +30,9 @@ function createArchiveFor(attachments: string[], assetsArchiveName: string) {
 
   attachments.forEach((attachment) => {
     const [source, target] = attachment.split(':')
-    archive.addLocalFolder(source, target || '')
+    if (fs.existsSync(source)) {
+      archive.addLocalFolder(source, target || '')
+    }
   })
 
   // Another way to write the zip file: `writeZip()`
