@@ -8,37 +8,14 @@ import fs from 'fs'
 import axios, { AxiosResponse } from 'axios'
 // eslint-disable-next-line
 import FormData from 'form-data'
-import AdmZip from 'adm-zip'
+
+import { convertToBase64, createArchivesFor } from './utils'
 import { TestRailResult } from './types'
 
 const API_ROUTE = '/index.php?/api/v2/'
 
-function convertToBase64(str: string): string {
-  // create a buffer
-  const buff = Buffer.from(str, 'utf-8')
-
-  // decode buffer as Base64
-  return buff.toString('base64')
-}
-
 const DEFAULT_HEADERS: {[id: string]: string} = {
   'Content-Type': 'application/json',
-}
-
-function createArchiveFor(attachments: string[], assetsArchiveName: string) {
-  const archive = new AdmZip()
-
-  attachments.forEach((attachment) => {
-    const [source, target] = attachment.split(':')
-    if (fs.existsSync(source)) {
-      archive.addLocalFolder(source, target || '')
-    }
-  })
-
-  // Another way to write the zip file: `writeZip()`
-  archive.writeZip(`${assetsArchiveName}.zip`)
-
-  return `${assetsArchiveName}.zip`
 }
 
 class TestRailConnector {
@@ -227,7 +204,7 @@ class TestRailConnector {
     runId: string,
     attachments: string[],
     assetsArchiveName: null | string = null,
-  ): Promise<AxiosResponse | null> {
+  ): Promise<boolean | null> {
     // No Archive Name specified? -> Attach each file
     if (!assetsArchiveName) {
       attachments.forEach((attachment) => this.addAttachmentToRun(runId, attachment))
@@ -235,10 +212,14 @@ class TestRailConnector {
     }
 
     // Create archive for assets and upload it
-    const archive = createArchiveFor(attachments, assetsArchiveName)
-    const response: AxiosResponse = await this.postForm('add_attachment_to_run/', runId, archive)
-    fs.unlinkSync(archive)
-    return response
+    const archives = createArchivesFor(attachments, assetsArchiveName)
+
+    await Promise.all(archives.map(async (archive) => {
+      await this.postForm('add_attachment_to_run/', runId, archive)
+      fs.unlinkSync(archive)
+    }))
+
+    return true
   }
 
   /**
