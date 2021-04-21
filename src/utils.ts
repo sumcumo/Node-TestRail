@@ -51,18 +51,21 @@ export function createArchivesFor(assets: string[], assetsArchiveName: string) {
 
     const [source] = asset.split(':')
 
-    const fileSize = getTotalSize(source)
+    // Skip source if it does not exist
+    if (fs.existsSync(source)) {
+      const fileSize = getTotalSize(source)
 
-    if (currentGroupSize > 0 && (currentGroupSize + fileSize) >= MAX_ARCHIVE_SIZE) {
-      currentGroupSize = 0
-      latestGroupIndex += 1
+      if (currentGroupSize > 0 && (currentGroupSize + fileSize) >= MAX_ARCHIVE_SIZE) {
+        currentGroupSize = 0
+        latestGroupIndex += 1
+      }
+
+      // eslint-disable-next-line no-param-reassign
+      if (!group[latestGroupIndex]) group[latestGroupIndex] = []
+
+      currentGroupSize += fileSize
+      group[latestGroupIndex].push(asset)
     }
-
-    // eslint-disable-next-line no-param-reassign
-    if (!group[latestGroupIndex]) group[latestGroupIndex] = []
-
-    currentGroupSize += fileSize
-    group[latestGroupIndex].push(asset)
 
     return group
   }, groupedAssets)
